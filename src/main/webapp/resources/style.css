@@ -56,6 +56,7 @@ p:hover, span:hover, a:hover {
 
 .header_text {
     font-size: 25px;
+    color: #433f55;
 }
 
 .time {
@@ -319,8 +320,8 @@ input[type=number]{
     justify-content: center;
     align-items: center;
     justify-self: center;
-    height: 300px;
-    width: 300px;
+    height: 500px;
+    width: 500px;
     padding: 1vw;
 }
 

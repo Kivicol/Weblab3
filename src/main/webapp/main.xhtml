@@ -9,7 +9,7 @@
 <my:header title="Дмитришен К. Р., Р3224, 24173 варик"/>
 <main class="main">
     <div class="section">
-        <h:link value="Return to index" styleClass="navigation-button2" outcome="goToIndex">
+        <h:link value="К начальной странице" styleClass="navigation-button2" outcome="goToIndex">
         </h:link>
         <h:form>
             <h:inputHidden id="x" name="x" type="number" value="#{xCoordinateBean.x}">
@@ -20,7 +20,7 @@
                 <div class="selector_inner">
                     <p>R</p>
                     <div class="checkboxes">
-                        <h:selectOneRadio id="r" value="#{rCoordinateBean.r}" required="true">
+                        <h:selectOneRadio id="r" value="#{rCoordinateBean.r}" required="true" onchange="redrawCanvas()">
                             <f:selectItem itemValue="1" itemLabel="1"/>
                             <f:selectItem itemValue="2" itemLabel="2"/>
                             <f:selectItem itemValue="3" itemLabel="3"/>

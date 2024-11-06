@@ -1,46 +1,104 @@
-(function(window, document) {
+(function (window, document) {
 
     window.onload = init;
+    window.redrawCanvas = redrawCanvas;
 
-    function drawCanvas1() {
-        const canvas = document.getElementById('canvas1')
+    function drawCanvas1(r) {
+        const canvas = document.getElementById('canvas1');
+        canvas.width = 300;
+        canvas.height = 300;
+        r = 1;
         if (canvas.getContext) {
             const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Прямоугольник от (-R, 0) до (0, R)
             ctx.beginPath();
-            ctx.moveTo(75, 75);
-            ctx.lineTo(150, 75);
-            ctx.lineTo(150, 0);
-            ctx.lineTo(75, 0);
-            ctx.lineTo(75, 75);
-            ctx.fillStyle = 'rgb(42, 42, 42)'
-            ctx.fill();
-        }
-    }
-    function drawCanvas2() {
-        const canvas = document.getElementById('canvas2')
-        if (canvas.getContext) {
-            const ctx = canvas.getContext("2d");
-            ctx.beginPath();
-            ctx.moveTo(150, 75)
-            ctx.lineTo(150, 75 - 75/2)
-            ctx.lineTo(300, 75)
-            ctx.lineTo(150, 75)
-            ctx.fillStyle = 'rgb(42, 42, 42)'
+            ctx.rect(150 - r * 75, 150 - r * 150, r * 75, r * 150);
+            ctx.fillStyle = 'rgb(42, 42, 42)';
             ctx.fill();
         }
     }
 
-    function drawCanvas3() {
-        const canvas = document.getElementById('canvas3')
-        canvas.width = 100
-        canvas.height = 100
+    function drawCanvas2(r) {
+        const canvas = document.getElementById('canvas2');
+        canvas.width = 300;
+        canvas.height = 300;
+        r = 1;
         if (canvas.getContext) {
             const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Треугольник от (0, 0) до (R, 0) и (0, -R/2)
             ctx.beginPath();
-            ctx.arc(50, 50, 25, Math.PI/2, Math.PI,false);
-            ctx.lineTo(50, 50)
-            ctx.fillStyle = 'rgb(42, 42, 42)'
+            ctx.moveTo(150, 150 - r * 75); // Вершина (0, R/2)
+            ctx.lineTo(150 + r * 150, 150); // Вершина (R, 0)
+            ctx.lineTo(150, 150); // Вершина (0, 0)
+            ctx.closePath();
+            ctx.fillStyle = 'rgb(42, 42, 42)';
             ctx.fill();
+        }
+    }
+
+    function drawCanvas3(r) {
+        const canvas = document.getElementById('canvas3');
+        canvas.width = 300;
+        canvas.height = 300;
+        r = 1;
+        if (canvas.getContext) {
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Четверть круга в левом нижнем углу
+            ctx.beginPath();
+            ctx.arc(150, 150, r * 75, 0.5 * Math.PI, Math.PI); // Радиус R/2
+            ctx.lineTo(150, 150);
+            ctx.closePath();
+            ctx.fillStyle = 'rgb(42, 42, 42)';
+            ctx.fill();
+        }
+    }
+
+
+    function redrawCanvas() {
+        const r = Number(document.querySelector('.checkboxes input:checked').value);
+        clearDots();
+        drawCanvas1(r);
+        drawCanvas2(r);
+        drawCanvas3(r);
+
+        drawDotsFromBeanTableData(r);
+    }
+
+    function init() {
+        redrawCanvas();
+        document.querySelector(".axis-box").addEventListener('click', handleAxisBoxClick);
+    }
+
+    function handleAxisBoxClick(event) {
+        const axisBox = document.querySelector(".axis-box");
+        const rect = axisBox.getBoundingClientRect();
+        let x = event.clientX - rect.left;
+        let y = event.clientY - rect.top;
+        let r = Number(document.querySelector('.checkboxes input:checked').value);
+
+        x -= 150;
+        y = -y + 150;
+        x /= 100;
+        y /= 100;
+        x *= r;
+        y *= r;
+
+        sendRequest(x, y, r, event.clientX, event.clientY);
+    }
+
+    function drawDot(clientX, clientY, hit) {
+        if (clientX > -300 && clientX < 300 && clientY > -300 && clientY < 300) {
+            const dot = document.createElement('dot');
+            dot.style.left = clientX + `px`;
+            dot.style.top = clientY + `px`;
+            if (hit) dot.classList.add("hit");
+            document.body.appendChild(dot);
         }
     }
 
@@ -83,43 +141,7 @@
         drawDot(clientX, clientY, response.isHit)
     }
 
-    function init(){
-        drawCanvas1();
-        drawCanvas2();
-        drawCanvas3()
-        drawDotsFromBeanTableData();
-        document.querySelector(".axis-box").addEventListener('click', handleAxisBoxClick);
-    }
-
-    function handleAxisBoxClick(event) {
-        const axisBox = document.querySelector(".axis-box");
-
-        const rect = axisBox.getBoundingClientRect()
-
-        // Calculate mouse position relative to the div
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
-        let r = Number(document.querySelector('.checkboxes input:checked').value);
-
-        x -= 150
-        y = -y + 150
-        x /= 100
-        y /= 100
-        x *= r
-        y *= r
-
-        sendRequest(x, y, r, event.clientX, event.clientY)
-    }
-
-    function drawDot(clientX, clientY, hit) {
-        const dot = document.createElement('dot');
-        dot.style.left = clientX+`px`; // Center the dot
-        dot.style.top = clientY+`px`;  // Center the dot
-        if (hit) dot.classList.add("hit");
-        document.body.appendChild(dot)
-    }
-
-    function drawDotsFromBeanTableData() {
+    function drawDotsFromBeanTableData(r) {
         const tbody = document.querySelector("table#results-table > tbody")
         let output = []
         tbody.childNodes.forEach(function (tr) {
@@ -135,7 +157,6 @@
         for (var i = 0; i < output.length; i++) {
             let x = Number(output[i][0]);
             let y = Number(output[i][1]);
-            let r = Number(output[i][2]);
             let isHit = String(output[i][3]) === 'true' ? true : false;
 
             x /= r
@@ -149,9 +170,19 @@
             x += rect.left;
             y += rect.top;
 
-            drawDot(x, y, isHit)
+            if (x > -300 && x < 300 && x > -300 && x < 300) {
+                drawDot(x, y, isHit)
+            }
         }
     }
+
+    function clearDots() {
+        const dots = document.querySelectorAll("dot");
+        dots.forEach(function (dot) {
+            dot.remove();
+        });
+    }
+
 })(window, document);
 
 
