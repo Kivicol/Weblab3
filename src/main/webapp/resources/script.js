@@ -93,13 +93,12 @@
     }
 
     function drawDot(clientX, clientY, hit) {
-        if (clientX > -300 && clientX < 300 && clientY > -300 && clientY < 300) {
-            const dot = document.createElement('dot');
-            dot.style.left = clientX + `px`;
-            dot.style.top = clientY + `px`;
-            if (hit) dot.classList.add("hit");
-            document.body.appendChild(dot);
-        }
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.left = clientX + `px`;
+        dot.style.top = clientY + `px`;
+        if (hit) dot.classList.add("hit");
+        document.body.appendChild(dot);
     }
 
     function sendRequest(x, y, r, clientX, clientY) {
@@ -153,7 +152,7 @@
         });
         console.log(output)
 
-        const rect = document.querySelector(".axis-box").getBoundingClientRect();
+        const rect = document.querySelector(".axis-block").getBoundingClientRect();
         for (var i = 0; i < output.length; i++) {
             let x = Number(output[i][0]);
             let y = Number(output[i][1]);
@@ -170,14 +169,13 @@
             x += rect.left;
             y += rect.top;
 
-            if (x > -300 && x < 300 && x > -300 && x < 300) {
-                drawDot(x, y, isHit)
-            }
+            drawDot(x, y, isHit)
+
         }
     }
 
     function clearDots() {
-        const dots = document.querySelectorAll("dot");
+        const dots = document.querySelectorAll(".dot");
         dots.forEach(function (dot) {
             dot.remove();
         });

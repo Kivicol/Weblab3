@@ -180,7 +180,8 @@ p:hover, span:hover, a:hover {
     top: 10%;
     margin: 10%;
     padding: 30px;
-    font-size: 36px;
+    width: auto;
+    font-size: 32px;
     border-radius: 20px;
     border: #25232F 5px solid;
     color: #757575;
@@ -348,7 +349,7 @@ canvas {
 
 .checkboxes {
     display: inline-flex;
-    gap: 1vw;
+    gap: 2vw;
 }
 
 
@@ -551,7 +552,7 @@ th.row {
     }
 }
 
-dot {
+.dot {
     position: absolute;
     background: red;
     border-radius: 50%;
@@ -559,6 +560,12 @@ dot {
     width: 8px;
     z-index: 10;
 }
-dot.hit {
+.dot.hit {
     background: green;
+}
+
+.checkboxes table tbody tr{
+    display: flex;
+    flex-direction: column;
+    height: auto;
 }
