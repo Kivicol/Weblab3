@@ -60,8 +60,9 @@
     }
 
 
+
     function redrawCanvas() {
-        const r = Number(document.querySelector('.checkboxes input:checked').value);
+        let r = Number(document.querySelector("input[id$='decimal']").value);
         clearDots();
         drawCanvas1(r);
         drawCanvas2(r);
@@ -76,21 +77,32 @@
     }
 
     function handleAxisBoxClick(event) {
-        const axisBox = document.querySelector(".axis-box");
+        const axisBox = document.querySelector(".axis-block");
         const rect = axisBox.getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
-        let r = Number(document.querySelector('.checkboxes input:checked').value);
+        let r = Number(document.querySelector("input[id$='decimal']").value);
 
-        x -= 150;
-        y = -y + 150;
-        x /= 100;
-        y /= 100;
-        x *= r;
-        y *= r;
+        // Вычисляем координаты клика относительно центра графика (150, 150)
+        let x = event.clientX - rect.left - 150;
+        let y = -(event.clientY - rect.top - 150); // Инвертируем Y, т.к. ось Y направлена вверх
 
+        // Преобразуем пиксели в логические координаты
+        x = (x / 100) * r;
+        y = (y / 100) * r;
+
+        // Лог для проверки
+        console.log(`Clicked at (x, y): (${x.toFixed(2)}, ${y.toFixed(2)}) with R = ${r}`);
+
+        // Обновляем поля формы перед отправкой запроса
+        const inputX = document.querySelector("input[id$=\":x\"]");
+        const inputY = document.querySelector("input[id$=\":y\"]");
+        inputX.value = x.toFixed(2);
+        inputY.value = y.toFixed(2);
+
+        // Отправляем запрос
         sendRequest(x, y, r, event.clientX, event.clientY);
     }
+
+
 
     function drawDot(clientX, clientY, hit) {
         const dot = document.createElement('div');
