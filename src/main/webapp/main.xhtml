@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:my="http://xmlns.jcp.org/jsf/composite/mycomponents"
+
 >
 <my:head title="Добро пожаловать в лабу номер 3"/>
 <body>
@@ -12,24 +14,42 @@
         <h:link value="К начальной странице" styleClass="navigation-button2" outcome="goToIndex">
         </h:link>
         <h:form>
-            <h:inputHidden id="x" name="x" type="number" value="#{xCoordinateBean.x}">
+
+
+            <h:inputHidden id="xHidden" name="x" type="number" value="#{xCoordinateBean.x}">
             </h:inputHidden>
-            <h:inputHidden id="y" name="y" type="number" value="#{yCoordinateBean.y}">
+            <h:inputHidden id="yHidden" name="y" type="number" value="#{yCoordinateBean.y}">
             </h:inputHidden>
-            <div class="selector">
-                <div class="selector_inner">
-                    <p>R</p>
-                    <div class="checkboxes">
-                        <h:selectOneRadio id="r" value="#{rCoordinateBean.r}" required="true" onchange="redrawCanvas()">
-                            <f:selectItem itemValue="1" itemLabel="1"/>
-                            <f:selectItem itemValue="2" itemLabel="2"/>
-                            <f:selectItem itemValue="3" itemLabel="3"/>
-                            <f:selectItem itemValue="4" itemLabel="4"/>
-                        </h:selectOneRadio>
-                    </div>
-                </div>
-            </div>
             <h:commandButton styleClass="hidden" id="submit-btn" value="Check"
+                             actionListener="#{resultsControllerBean.addResult(xCoordinateBean.x, yCoordinateBean.y, rCoordinateBean.r)}">
+            </h:commandButton>
+
+            <h:outputLabel for="xInput" value="Coordinate X (-5; 5)"/>
+            <div class="coords-input-wrapper">
+            <h:inputText id="xInput" styleClass="coords-input" value="#{xCoordinateBean.x}"
+                         required="true" maxlength="7"
+                         requiredMessage="Value X is required"
+                         validatorMessage="The value must be from -5 to 5">
+                <f:converter converterId="jakarta.faces.Double"/>
+                <f:validateDoubleRange minimum="-5" maximum="5"/>
+            </h:inputText>
+            </div>
+
+            <h:outputLabel for="yInput" value="Coordinate Y"/>
+            <div class="coords-input-wrapper">
+                <p:spinner id="yInput" value="#{yCoordinateBean.y}" min="-5" max="5" class="coords-input">
+                </p:spinner>
+            </div>
+
+
+            <h:outputLabel for="r" value="Range R"/><br/>
+            <div class="coords-input-wrapper" id="r">
+                <p:inputText id="decimal" value="#{rCoordinateBean.r}" class="coords-input" />
+                <p:slider for="decimal" minValue="1" maxValue="5" step="0.25" range="false" onSlide="redrawCanvas();" onSlideEnd="redrawCanvas();" />
+            </div>
+
+
+            <h:commandButton value="Send" styleClass="submit-btn"
                              actionListener="#{resultsControllerBean.addResult(xCoordinateBean.x, yCoordinateBean.y, rCoordinateBean.r)}">
             </h:commandButton>
         </h:form>

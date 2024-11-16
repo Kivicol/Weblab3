@@ -3,36 +3,34 @@
     window.onload = init;
     window.redrawCanvas = redrawCanvas;
 
-    function drawCanvas1(r) {
+    function drawCanvas1() {
         const canvas = document.getElementById('canvas1');
         canvas.width = 300;
         canvas.height = 300;
-        r = 1;
         if (canvas.getContext) {
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Прямоугольник от (-R, 0) до (0, R)
             ctx.beginPath();
-            ctx.rect(150 - r * 75, 150 - r * 150, r * 75, r * 150);
+            ctx.rect(150 - 75, 150 - 150, 75, 150);
             ctx.fillStyle = 'rgb(42, 42, 42)';
             ctx.fill();
         }
     }
 
-    function drawCanvas2(r) {
+    function drawCanvas2() {
         const canvas = document.getElementById('canvas2');
         canvas.width = 300;
         canvas.height = 300;
-        r = 1;
         if (canvas.getContext) {
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Треугольник от (0, 0) до (R, 0) и (0, -R/2)
             ctx.beginPath();
-            ctx.moveTo(150, 150 - r * 75); // Вершина (0, R/2)
-            ctx.lineTo(150 + r * 150, 150); // Вершина (R, 0)
+            ctx.moveTo(150, 150 - 75); // Вершина (0, R/2)
+            ctx.lineTo(150 + 150, 150); // Вершина (R, 0)
             ctx.lineTo(150, 150); // Вершина (0, 0)
             ctx.closePath();
             ctx.fillStyle = 'rgb(42, 42, 42)';
@@ -40,18 +38,17 @@
         }
     }
 
-    function drawCanvas3(r) {
+    function drawCanvas3() {
         const canvas = document.getElementById('canvas3');
         canvas.width = 300;
         canvas.height = 300;
-        r = 1;
         if (canvas.getContext) {
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Четверть круга в левом нижнем углу
             ctx.beginPath();
-            ctx.arc(150, 150, r * 75, 0.5 * Math.PI, Math.PI); // Радиус R/2
+            ctx.arc(150, 150, 75, 0.5 * Math.PI, Math.PI); // Радиус R/2
             ctx.lineTo(150, 150);
             ctx.closePath();
             ctx.fillStyle = 'rgb(42, 42, 42)';
@@ -59,14 +56,13 @@
         }
     }
 
-
     function redrawCanvas() {
-        const r = Number(document.querySelector('.checkboxes input:checked').value);
         clearDots();
-        drawCanvas1(r);
-        drawCanvas2(r);
-        drawCanvas3(r);
+        drawCanvas1();
+        drawCanvas2();
+        drawCanvas3();
 
+        let r = Number(document.querySelector("input[id$='decimal']").value);
         drawDotsFromBeanTableData(r);
     }
 
@@ -78,19 +74,22 @@
     function handleAxisBoxClick(event) {
         const axisBox = document.querySelector(".axis-box");
         const rect = axisBox.getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
-        let r = Number(document.querySelector('.checkboxes input:checked').value);
+        let r = Number(document.querySelector("input[id$='decimal']").value);
 
-        x -= 150;
-        y = -y + 150;
-        x /= 100;
-        y /= 100;
-        x *= r;
-        y *= r;
+        if (!Number.isInteger(r)) {
+            alert("Невозможно отправить точку: R должно быть натуральным числом!");
+            return;
+        }
+
+        let x = event.clientX - rect.left - 150;
+        let y = -(event.clientY - rect.top - 150); // Инвертируем Y, т.к. ось Y направлена вверх
+
+        x = (x / 100) * r;
+        y = (y / 100) * r;
 
         sendRequest(x, y, r, event.clientX, event.clientY);
     }
+
 
     function drawDot(clientX, clientY, hit) {
         const dot = document.createElement('div');
@@ -102,8 +101,8 @@
     }
 
     function sendRequest(x, y, r, clientX, clientY) {
-        document.querySelector("input[id$=\":x\"]").value = x;
-        document.querySelector("input[id$=\":y\"]").value = y;
+        document.querySelector("input[id$=\":xInput\"]").value = x;
+        document.querySelector("input[id$=':yInput_input']").value = y;
         document.querySelector("input[id$=\":submit-btn\"]").click();
     }
 
@@ -152,7 +151,7 @@
         });
         console.log(output)
 
-        const rect = document.querySelector(".axis-block").getBoundingClientRect();
+        const rect = document.querySelector(".axis-box").getBoundingClientRect();
         for (var i = 0; i < output.length; i++) {
             let x = Number(output[i][0]);
             let y = Number(output[i][1]);
