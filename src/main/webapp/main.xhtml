@@ -15,9 +15,18 @@
         </h:link>
         <h:form>
 
-            <h:outputLabel for="x" value="Coordinate X (-5; 5)"/>
+
+            <h:inputHidden id="xHidden" name="x" type="number" value="#{xCoordinateBean.x}">
+            </h:inputHidden>
+            <h:inputHidden id="yHidden" name="y" type="number" value="#{yCoordinateBean.y}">
+            </h:inputHidden>
+            <h:commandButton styleClass="hidden" id="submit-btn" value="Check"
+                             actionListener="#{resultsControllerBean.addResult(xCoordinateBean.x, yCoordinateBean.y, rCoordinateBean.r)}">
+            </h:commandButton>
+
+            <h:outputLabel for="xInput" value="Coordinate X (-5; 5)"/>
             <div class="coords-input-wrapper">
-            <h:inputText id="x" styleClass="coords-input" value="#{xCoordinateBean.x}"
+            <h:inputText id="xInput" styleClass="coords-input" value="#{xCoordinateBean.x}"
                          required="true" maxlength="7"
                          requiredMessage="Value X is required"
                          validatorMessage="The value must be from -5 to 5">
@@ -26,9 +35,9 @@
             </h:inputText>
             </div>
 
-            <h:outputLabel for="y" value="Coordanate Y"/>
+            <h:outputLabel for="yInput" value="Coordinate Y"/>
             <div class="coords-input-wrapper">
-                <p:spinner id="y" value="#{yCoordinateBean.y}" min="-5" max="5" class="coords-input">
+                <p:spinner id="yInput" value="#{yCoordinateBean.y}" min="-5" max="5" class="coords-input">
                 </p:spinner>
             </div>
 
@@ -36,7 +45,7 @@
             <h:outputLabel for="r" value="Range R"/><br/>
             <div class="coords-input-wrapper" id="r">
                 <p:inputText id="decimal" value="#{rCoordinateBean.r}" class="coords-input" />
-                <p:slider for="decimal" minValue="1" maxValue="5" step="0.25" range="false" onChange="redrawCanvas();" />
+                <p:slider for="decimal" minValue="1" maxValue="5" step="0.25" range="false" onSlide="redrawCanvas();" onSlideEnd="redrawCanvas();" />
             </div>
 
 
@@ -47,7 +56,7 @@
     </div>
 
     <div class="section">
-        <h:form class="axis-box">
+        <div class="axis-box">
             <div class="canvas-block">
                 <canvas id="canvas1"/>
                 <canvas id="canvas2"/>
@@ -73,15 +82,7 @@
                     <span class="stick invisible"/>
                 </div>
             </div>
-
-            <h:inputHidden id="x" name="x" type="number" value="#{xCoordinateBean.x}">
-            </h:inputHidden>
-            <h:inputHidden id="y" name="y" type="number" value="#{yCoordinateBean.y}">
-            </h:inputHidden>
-            <h:commandButton styleClass="hidden" id="submit-btn" value="Check"
-                             actionListener="#{resultsControllerBean.addResult(xCoordinateBean.x, yCoordinateBean.y, rCoordinateBean.r)}">
-            </h:commandButton>
-        </h:form>
+        </div>
     </div>
 
     <div class="section">
