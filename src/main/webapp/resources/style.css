@@ -670,3 +670,7 @@ th.row {
     color: #25232f !important;
     border: 1px solid #2a2a2a !important;
 }
+
+.ui-inputfield.ui-state-focus{
+    border-color: transparent !important;
+}
